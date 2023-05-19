@@ -22,7 +22,17 @@ object Lists:
    * @param xs A list of natural numbers
    * @return The sum of all elements in `xs`
    */
-  def sum(xs: List[Int]): Int = ???
+  def sum(xs: List[Int]): Int = 
+    var total = 0
+    if (xs.isEmpty) 
+      throws new java.util.NoSuchElementException("empty list")
+    else 
+      total += xs.head
+      var tailList = xs.tail
+      if (xs.tail.isEmpty) 
+        total
+      else  
+        total + sum(xs.tail)
 
   /**
    * This method returns the largest element in a list of integers. If the
@@ -37,4 +47,16 @@ object Lists:
    * @return The largest element in `xs`
    * @throws java.util.NoSuchElementException if `xs` is an empty list
    */
-  def max(xs: List[Int]): Int = ???
+  def max(xs: List[Int]): Int = 
+    var maxList, maxTail
+    if (xs.isEmpty) 
+      throws new java.util.NoSuchElementException("empty list")
+    else if (xs.tail.isEmpty)
+      xs.head
+    else
+      maxList = xs.head
+      maxTail = max(xs.tail)
+      if (maxList < maxTail)
+        maxTail
+      else
+        maxList
