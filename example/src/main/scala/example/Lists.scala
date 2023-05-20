@@ -25,11 +25,11 @@ object Lists:
   def sum(xs: List[Int]): Int = 
     var total = 0
     if (xs.isEmpty) 
-      throws new java.util.NoSuchElementException("empty list")
+      throw new NoSuchElementException("empty list")
     else 
       total += xs.head
       var tailList = xs.tail
-      if (xs.tail.isEmpty) 
+      if (tailList.isEmpty) 
         total
       else  
         total + sum(xs.tail)
@@ -48,9 +48,10 @@ object Lists:
    * @throws java.util.NoSuchElementException if `xs` is an empty list
    */
   def max(xs: List[Int]): Int = 
-    var maxList, maxTail
+    var maxList = 0
+    var maxTail = 0
     if (xs.isEmpty) 
-      throws new java.util.NoSuchElementException("empty list")
+      throw new NoSuchElementException("empty list")
     else if (xs.tail.isEmpty)
       xs.head
     else
