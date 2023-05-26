@@ -4,6 +4,8 @@ import java.util.concurrent.*
 import scala.util.DynamicVariable
 
 import org.scalameter.*
+import scala.language.postfixOps
+import scala.math._
 
 /** The value of every pixel is represented as a 32 bit integer. */
 type RGBA = Int
@@ -45,21 +47,24 @@ def boxBlurKernel(src: Img, x: Int, y: Int, radius: Int): RGBA =
   var eachY = y - radius
   var srcWidth = src.width
   var srcHeight = src.height
-  var sumRX = sumGX = sumBX = sumAX = 0
-  var sumRY = sumGY = sumBY = sumAY = 0
+  var sumR = 0
+  var sumG = 0
+  var sumB = 0
+  var sumA = 0
+  var countPixel = 0
+
   while eachY <= min((y + radius), srcHeight) do
     if clamp(eachY, -1, srcHeight + 1) > -1 then
       while eachX <= min((x + radius), srcWidth) do
         if clamp(eachX, -1, srcWidth + 1) > -1 then
-          sumRX += src.data[eachY * srcWidth + eachX]
-    eachY ++
-    
-
-  while (eachY >= 0) & (eachY < src.height) do
-    while (eachX >= 0) & (eachX < srcWidth) do
-      sumX += src.data[eachY * srcWidth + eachX]
-
-
+          sumR = sumR + red(src.data[eachY * srcWidth + eachX])
+          sumG = sumG + green(src.data[eachY * srcWidth + eachX])
+          sumB = sumB + blue(src.data[eachY * srcWidth + eachX])
+          sumA = sumA + alpha(src.data[eachY * srcWidth + eachX])
+          countPixel = countPixel + 1
+        eachX = 1
+    eachY = eachY + 1
+  rgba(sumR / countPixel, sumG / countPixel, sumB / countPixel, sumA / countPixel)
 
 val forkJoinPool = ForkJoinPool()
 
