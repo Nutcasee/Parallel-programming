@@ -51,20 +51,23 @@ def boxBlurKernel(src: Img, x: Int, y: Int, radius: Int): RGBA =
   var sumG = 0
   var sumB = 0
   var sumA = 0
-  var countPixel = 0
-
+  var count = 0
+  
+  /** ah, i need 'support' from net for:
+    src(eachX, eachY)
+  */
   while eachY <= min((y + radius), srcHeight) do
     if clamp(eachY, -1, srcHeight + 1) > -1 then
       while eachX <= min((x + radius), srcWidth) do
         if clamp(eachX, -1, srcWidth + 1) > -1 then
-          sumR = sumR + red(src.data[eachY * srcWidth + eachX])
-          sumG = sumG + green(src.data[eachY * srcWidth + eachX])
-          sumB = sumB + blue(src.data[eachY * srcWidth + eachX])
-          sumA = sumA + alpha(src.data[eachY * srcWidth + eachX])
-          countPixel = countPixel + 1
+          sumR = sumR + red(src(eachX, eachY))  
+          sumG = sumG + green(src(eachX, eachY))
+          sumB = sumB + blue(src(eachX, eachY))
+          sumA = sumA + alpha(src(eachX, eachY))
+          count = count + 1
         eachX = 1
     eachY = eachY + 1
-  rgba(sumR / countPixel, sumG / countPixel, sumB / countPixel, sumA / countPixel)
+  rgba(sumR / count, sumG / count, sumB / count, sumA / count)
 
 val forkJoinPool = ForkJoinPool()
 

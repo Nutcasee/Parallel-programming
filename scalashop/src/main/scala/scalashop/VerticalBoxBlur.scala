@@ -1,6 +1,9 @@
 package scalashop
 
+import java.util.concurrent.*
+
 import org.scalameter.*
+import scala.math._
 
 object VerticalBoxBlurRunner:
 
@@ -41,7 +44,11 @@ object VerticalBoxBlur extends VerticalBoxBlurInterface:
    */
   def blur(src: Img, dst: Img, from: Int, end: Int, radius: Int): Unit =
     // TODO implement this method using the `boxBlurKernel` method
-    ???
+    // ???
+    for i <- from to (end - 1) do
+      for j <- 0 to (src.height - 1) do
+        dst(i,j) = boxBlurKernel(src, i, j, radius)
+        // dst.update(i, j, boxBlurKernel(src, i, j, radius))
 
   /** Blurs the columns of the source image in parallel using `numTasks` tasks.
    *
@@ -51,5 +58,14 @@ object VerticalBoxBlur extends VerticalBoxBlurInterface:
    */
   def parBlur(src: Img, dst: Img, numTasks: Int, radius: Int): Unit =
     // TODO implement using the `task` construct and the `blur` method
-    ???
-
+    // ???
+    // 1 to 10 by 2   // Range(1, 3, 5, 7, 9)
+    val i = max(src.width / numTasks, 1)
+    val rangeFromTo = Range(0, src.width) by i
+    val tasks = rangeFromTo.map(t => {
+      task(blur(src, dst, t, t + i, radius))
+    })
+    // next line is not original from me...
+    tasks.foreach(_.join())
+    // tasks foreach (_.join())
+    // tasks.map(t => t.join())
