@@ -43,28 +43,31 @@ def boxBlurKernel(src: Img, x: Int, y: Int, radius: Int): RGBA =
 
   // TODO implement using while loops
   // while x >= 0 do x = f(x)
-  var r = 0
-  var g = 0
-  var b = 0
-  var a = 0
-
-  var cnt = 0
-
-  var xi = clamp(x-radius, 0, src.width-1)
-  while(xi<=clamp(x+radius, 0, src.width-1)) {
-    var yi = clamp(y-radius, 0, src.height-1)
-    while(yi<=clamp(y+radius, 0, src.height-1)) {
-      r = r + red(src(xi, yi))
-      g = g + green(src(xi, yi))
-      b = b + blue(src(xi, yi))
-      a = a + alpha(src(xi, yi))
-      cnt = cnt + 1
-      yi = yi + 1
-    }
-    xi = xi + 1
-  }
-
-  rgba(r/cnt, g/cnt, b/cnt, a/cnt)
+  var eachX = x - radius
+  var eachY = y - radius
+  var srcWidth = src.width
+  var srcHeight = src.height
+  var sumR = 0
+  var sumG = 0
+  var sumB = 0
+  var sumA = 0
+  var count = 0
+  
+  /** ah, i need 'support' from net for:
+    src(eachX, eachY)
+  */
+  while eachY <= min((y + radius), (srcHeight - 1)) do
+    if eachY >= 0 then
+      while eachX <= min((x + radius), (srcWidth - 1)) do
+        if eachX >=0 then
+          sumR = sumR + red(src(eachX, eachY))  
+          sumG = sumG + green(src(eachX, eachY))
+          sumB = sumB + blue(src(eachX, eachY))
+          sumA = sumA + alpha(src(eachX, eachY))
+          count = count + 1
+        eachX += 1
+    eachY = eachY + 1
+  rgba(sumR / count, sumG / count, sumB / count, sumA / count)
 
 val forkJoinPool = ForkJoinPool()
 

@@ -45,11 +45,10 @@ object VerticalBoxBlur extends VerticalBoxBlurInterface:
   def blur(src: Img, dst: Img, from: Int, end: Int, radius: Int): Unit =
     // TODO implement this method using the `boxBlurKernel` method
     // ???
-    for(x <- from until end){
-      for(y <- 0 until src.height){
-        dst(x,y) = boxBlurKernel(src, x, y, radius)
-      }
-    }
+    for i <- from to (end - 1) do
+      for j <- 0 to (src.height - 1) do
+        dst(i,j) = boxBlurKernel(src, i, j, radius)
+        // dst.update(i, j, boxBlurKernel(src, i, j, radius))
 
   /** Blurs the columns of the source image in parallel using `numTasks` tasks.
    *
@@ -57,9 +56,16 @@ object VerticalBoxBlur extends VerticalBoxBlurInterface:
    *  `numTasks` separate strips, where each strip is composed of some number of
    *  columns.
    */
-  def parBlur(src: Img, dst: Img, numTasks: Int, radius: Int): Unit = {
-    val r = 0 to src.width by (src.width/Math.min(numTasks, src.width))
-    val ranges = r zip r.tail
-    val tasks = ranges.map( { case (from, to) => task(blur(src, dst, from, to, radius)) } )
-    tasks foreach (_.join)
-  }
+  def parBlur(src: Img, dst: Img, numTasks: Int, radius: Int): Unit =
+    // TODO implement using the `task` construct and the `blur` method
+    // ???
+    // 1 to 10 by 2   // Range(1, 3, 5, 7, 9)
+    val i = max(src.width / numTasks, 1)
+    val rangeFromTo = Range(0, src.width) by i
+    val tasks = rangeFromTo.map(t => {
+      task(blur(src, dst, t, t + i, radius))
+    })
+    // next line is not original from me...
+    tasks.foreach(_.join())
+    // tasks foreach (_.join())
+    // tasks.map(t => t.join())
