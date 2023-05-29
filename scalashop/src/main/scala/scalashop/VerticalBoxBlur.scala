@@ -47,8 +47,9 @@ object VerticalBoxBlur extends VerticalBoxBlurInterface:
     // ???
     for i <- from to (end - 1) do
       for j <- 0 to (src.height - 1) do
-        dst(i,j) = boxBlurKernel(src, i, j, radius)
-        // dst.update(i, j, boxBlurKernel(src, i, j, radius))
+        if (i >=0 && i < src.width)
+          dst(i,j) = boxBlurKernel(src, i, j, radius)
+          // dst.update(i, j, boxBlurKernel(src, i, j, radius))
 
   /** Blurs the columns of the source image in parallel using `numTasks` tasks.
    *

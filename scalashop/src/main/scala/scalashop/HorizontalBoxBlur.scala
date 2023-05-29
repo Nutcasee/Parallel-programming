@@ -40,11 +40,26 @@ object HorizontalBoxBlur extends HorizontalBoxBlurInterface:
    */
   def blur(src: Img, dst: Img, from: Int, end: Int, radius: Int): Unit =
     // TODO implement this method using the `boxBlurKernel` method
-    for i <- from to (end - 1) do
-      for j <- 0 to (src.width - 1) do
-        dst(i,j) = boxBlurKernel(src, i, j, radius)
-        // dst.update(i, j, boxBlurKernel(src, i, j, radius))
-
+    // some dude know how to code functioning progs so don't have to worry 
+    // about corner cases of if (as below)...plus i fucked up i,j order
+    for(i <- from until end){
+      for(j <- 0 until src.width){
+        if (i >= 0 && i < src.height) { 
+          dst(j,i) = boxBlurKernel(src, j, i, radius)
+          // dst.update(j, i, boxBlurKernel(src, j, i, radius)) 
+        } 
+      }     
+    }
+    // for(y <- from until end){
+    //   for(x <- 0 until src.width){
+    //     dst(x,y) = boxBlurKernel(src, x, y, radius)
+    //   }
+    // }
+    // for {
+    //   row <- from until end
+    //   column <- 0 until src.width
+    // } yield dst.update(column, row, boxBlurKernel(src, column, row, radius))
+    
   /** Blurs the rows of the source image in parallel using `numTasks` tasks.
    *
    *  Parallelization is done by stripping the source image `src` into
