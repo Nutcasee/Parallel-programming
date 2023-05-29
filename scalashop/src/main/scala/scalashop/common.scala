@@ -43,8 +43,10 @@ def boxBlurKernel(src: Img, x: Int, y: Int, radius: Int): RGBA =
 
   // TODO implement using while loops
   // while x >= 0 do x = f(x)
-  var eachX = x - radius
-  var eachY = y - radius
+  var eachX = clamp(x - radius, 0, x + radius)
+  var eachY = clamp(y - radius, 0, y + radius)
+  // var eachX = x - radius
+  // var eachY = y - radius
   var srcWidth = src.width
   var srcHeight = src.height
   var sumR = 0
@@ -57,15 +59,15 @@ def boxBlurKernel(src: Img, x: Int, y: Int, radius: Int): RGBA =
     src(eachX, eachY)
   */
   while eachY <= min((y + radius), (srcHeight - 1)) do
-    if eachY >= 0 then
-      while eachX <= min((x + radius), (srcWidth - 1)) do
-        if eachX >=0 then
-          sumR = sumR + red(src(eachX, eachY))  
-          sumG = sumG + green(src(eachX, eachY))
-          sumB = sumB + blue(src(eachX, eachY))
-          sumA = sumA + alpha(src(eachX, eachY))
-          count = count + 1
-        eachX += 1
+    // if eachY >= 0 then
+    while eachX <= min((x + radius), (srcWidth - 1)) do
+      // if eachX >=0 then
+      sumR = sumR + red(src(eachX, eachY))  
+      sumG = sumG + green(src(eachX, eachY))
+      sumB = sumB + blue(src(eachX, eachY))
+      sumA = sumA + alpha(src(eachX, eachY))
+      count = count + 1
+      eachX += 1
     eachY = eachY + 1
   rgba(sumR / count, sumG / count, sumB / count, sumA / count)
 
