@@ -58,9 +58,9 @@ def boxBlurKernel(src: Img, x: Int, y: Int, radius: Int): RGBA =
   /** ah, i need 'support' from net for:
     src(eachX, eachY)
   */
-  while eachY <= min((y + radius), (srcHeight - 1)) do
+  while eachY <= clamp((y + radius), 0, (srcHeight - 1)) do
     // if eachY >= 0 then
-    while eachX <= min((x + radius), (srcWidth - 1)) do
+    while eachX <= clamp((x + radius), 0, (srcWidth - 1)) do
       // if eachX >=0 then
       sumR = sumR + red(src(eachX, eachY))  
       sumG = sumG + green(src(eachX, eachY))

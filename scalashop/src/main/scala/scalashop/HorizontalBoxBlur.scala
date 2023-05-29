@@ -50,15 +50,13 @@ object HorizontalBoxBlur extends HorizontalBoxBlurInterface:
         } 
       }     
     }
-    // for(y <- from until end){
-    //   for(x <- 0 until src.width){
-    //     dst(x,y) = boxBlurKernel(src, x, y, radius)
-    //   }
+    // for(
+    //   x <- 0 until src.width;
+    //   y <- from until end;
+    //   if y >= 0 && y < src.height
+    // ) yield {
+    //   dst.update(x, y, boxBlurKernel(src, x, y, radius))
     // }
-    // for {
-    //   row <- from until end
-    //   column <- 0 until src.width
-    // } yield dst.update(column, row, boxBlurKernel(src, column, row, radius))
     
   /** Blurs the rows of the source image in parallel using `numTasks` tasks.
    *
