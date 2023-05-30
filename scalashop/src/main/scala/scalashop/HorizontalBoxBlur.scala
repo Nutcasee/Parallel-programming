@@ -43,8 +43,8 @@ object HorizontalBoxBlur extends HorizontalBoxBlurInterface:
     // some dude know how to code functioning progs so don't have to worry 
     // about corner cases of if (as below)...plus i fucked up i,j order
     for(i <- from until end){
-      for(j <- 0 until src.width){
-        if (i >= 0 && i < src.height) { 
+      if (i < src.height) { 
+        for(j <- 0 until src.width){
           dst(j,i) = boxBlurKernel(src, j, i, radius)
           // dst.update(j, i, boxBlurKernel(src, j, i, radius)) 
         } 
