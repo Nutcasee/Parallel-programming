@@ -69,48 +69,42 @@ def boxBlurKernel(src: Img, x: Int, y: Int, radius: Int): RGBA =
   //   eachY = eachY + 1
   // rgba(sumR / count, sumG / count, sumB / count, sumA / count)
 
-  var srcWidth = src.width
-  var srcHeight = src.height
-  var sumR = 0
-  var sumG = 0
-  var sumB = 0
-  var sumA = 0
-  var count = 0
+  // var srcWidth = src.width
+  // var srcHeight = src.height
+  // var sumR = 0
+  // var sumG = 0
+  // var sumB = 0
+  // var sumA = 0
+  // var count = 0
 
-  for (j <- (-radius) to radius) {
-    var yj = clamp(y + j, 0, srcHeight - 1)
-    for (i <- (-radius) to radius) {
-      var xi = clamp(x + i, 0, srcWidth - 1)
-      sumR = sumR + red(src(xi, yj))  
-      sumG = sumG + green(src(xi, yj))
-      sumB = sumB + blue(src(xi, yj))
-      sumA = sumA + alpha(src(xi, yj))
-      count = count + 1
-      xi += 1
+  // for (j <- (-radius) to radius) {
+  //   var yj = clamp(y + j, 0, srcHeight - 1)
+  //   for (i <- (-radius) to radius) {
+  //     var xi = clamp(x + i, 0, srcWidth - 1)
+  //     sumR = sumR + red(src(xi, yj))  
+  //     sumG = sumG + green(src(xi, yj))
+  //     sumB = sumB + blue(src(xi, yj))
+  //     sumA = sumA + alpha(src(xi, yj))
+  //     count = count + 1
+  //     xi += 1
+  //   }
+  //   yj += 1
+  // }
+
+  // rgba(sumR / count, sumG / count, sumB / count, sumA / count)
+
+  val box: IndexedSeq[RGBA] = for {
+      i <- clamp(x - radius, 0, x - radius) to clamp(x + radius, x, src.width - 1)
+      j <- clamp(y - radius, 0, y - radius) to clamp(y + radius, y, src.height - 1)
+    } yield src(i, j)
+    val sum: (Int, Int, Int, Int) = box.foldRight((0, 0, 0, 0)) { (i, acc) =>
+      (acc._1 + red(i), acc._2 + green(i), acc._3 + blue(i), acc._4 + alpha(i))
     }
-    yj += 1
-  }
+  rgba(sum._1 / box.size,
+         sum._2 / box.size,
+         sum._3 / box.size,
+         sum._4 / box.size)
 
-  rgba(sumR / count, sumG / count, sumB / count, sumA / count)
-
-
-  //   val pixels = {
-  //   for (
-  //     i <- -radius to radius;
-  //     j <- -radius to radius
-  //   ) yield (scalashop.clamp(x + i, 0, src.width - 1), scalashop.clamp(y + j, 0, src.height - 1))
-  // }.distinct.map({
-  //   case (x, y) =>
-  //     val pixel = src(x, y)
-  //     (red(pixel), green(pixel), blue(pixel), alpha(pixel))
-  // })
-
-  // rgba(
-  //   pixels.map(_._1).sum / pixels.length,
-  //   pixels.map(_._2).sum / pixels.length,
-  //   pixels.map(_._3).sum / pixels.length,
-  //   pixels.map(_._4).sum / pixels.length
-  // )
 val forkJoinPool = ForkJoinPool()
 
 abstract class TaskScheduler:
