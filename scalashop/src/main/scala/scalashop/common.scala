@@ -51,18 +51,30 @@ def boxBlurKernel(src: Img, x: Int, y: Int, radius: Int): RGBA =
   var sumA = 0
   var count = 0
 
+  // for (j <- (-radius) to radius) {
+  //   var yj = clamp(y + j, 0, srcHeight - 1)
+  //   for (i <- (-radius) to radius) {
+  //     var xi = clamp(x + i, 0, srcWidth - 1)
+  //     sumR = sumR + red(src(xi, yj))  
+  //     sumG = sumG + green(src(xi, yj))
+  //     sumB = sumB + blue(src(xi, yj))
+  //     sumA = sumA + alpha(src(xi, yj))
+  //     count = count + 1
+  //     xi += 1
+  //   }
+  //   yj += 1
+  // }
+
+  // rgba(sumR / count, sumG / count, sumB / count, sumA / count)
+
   for (j <- clamp(y - radius, 0, y - radius) to clamp(y + radius, y, src.height - 1)) {
-    // var yj = clamp(y + j, 0, srcHeight - 1)
     for (i <- clamp(x - radius, 0, x - radius) to clamp(x + radius, x, src.width - 1)) {
-      // var xi = clamp(x + i, 0, srcWidth - 1)
       sumR = sumR + red(src(i, j))  
       sumG = sumG + green(src(i, j))
       sumB = sumB + blue(src(i, j))
       sumA = sumA + alpha(src(i, j))
       count = count + 1
-      // i += 1
     }
-    // j += 1
   }
 
   rgba(sumR / count, sumG / count, sumB / count, sumA / count)
