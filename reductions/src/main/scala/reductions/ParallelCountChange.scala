@@ -48,8 +48,13 @@ object ParallelCountChange extends ParallelCountChangeInterface:
    *  coins for the specified amount of money.
    */
   def countChange(money: Int, coins: List[Int]): Int =
-    ???
-    SDSDFLJsdsd
+    // ???
+    var numberWay = 0
+    if (coins.isEmpty)
+      numberWay
+    else
+      countChange(money - coins.head, coins.tail) + numberWay + countChange(money, coins.tail)
+
   type Threshold = (Int, List[Int]) => Boolean
 
   /** In parallel, counts the number of ways change can be made from the
