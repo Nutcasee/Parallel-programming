@@ -49,6 +49,8 @@ object ParallelCountChange extends ParallelCountChangeInterface:
    */
   def countChange(money: Int, coins: List[Int]): Int =
     // ???
+    // could improve this by using helper method, cache...
+    // countChangeCache(money, coins, cache: List.fill(coins.length - 1).(0))
     // var numberWay = 0
     if (coins.isEmpty | money <= 0) 
       0

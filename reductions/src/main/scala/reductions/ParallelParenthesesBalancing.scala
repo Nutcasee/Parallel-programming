@@ -38,21 +38,48 @@ object ParallelParenthesesBalancing extends ParallelParenthesesBalancingInterfac
   /** Returns `true` iff the parentheses in the input `chars` are balanced.
    */
   def balance(chars: Array[Char]): Boolean =
-    ???
+    // ???
+    // i know many guys love useing helper 'method' for this, but 
+    // imperative code make me feel at home, fuck function-ism..
+    // in weak defense of ...For maximum performance, use a while loop in the traverse 
+    // method, or make traverse tail-recursive -- do not use a Range.
+    var bl = 0
+    var i = 0
+    while (i < chars.length)
+      if (chars(i) == '(')
+        bl += 1
+      else if (chars(i) == ')')
+        bl += -1
+      i += 1
+    bl == 0
 
   /** Returns `true` iff the parentheses in the input `chars` are balanced.
    */
   def parBalance(chars: Array[Char], threshold: Int): Boolean =
 
-    def traverse(idx: Int, until: Int, arg1: Int, arg2: Int) /*: ???*/ = {
-      ???
+    def traverse(idx: Int, until: Int, arg1: Int, arg2: Int) : Int /*: ???*/ = {
+      // ???
+      while (idx < until) {
+        if (chars(idx) == '(')
+          arg1 += 1
+        else if (chars(idx) == ')')
+          arg2 += 1
+        idx += 1
+      arg1 - arg2
+      }
     }
 
-    def reduce(from: Int, until: Int) /*: ???*/ = {
-      ???
+    def reduce(from: Int, until: Int) : Int /*: ???*/ = {
+      // ???
+      if (until - from < threshold)
+        traverse(from, until, 0, 0)
+      else
+        var mid = (from + until) / 2
+        val (r1,r2) = parallel(reduce(from, mid), reduce(mid, until))
+        r1 + r2
     }
 
-    reduce(0, chars.length) == ???
+    reduce(0, chars.length) == 0  // ???
 
   // For those who want more:
   // Prove that your reduction operator is associative!
