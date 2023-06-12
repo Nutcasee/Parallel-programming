@@ -34,12 +34,28 @@ object LineOfSight extends LineOfSightInterface:
 
   def lineOfSight(input: Array[Float], output: Array[Float]): Unit =
     // ???
-    dfs
+    var i  = 0
+    output(0) = 0
+    i += 1
+    var max = 0F
+    while (i < input.length)
+      if (input(i) / i > max)
+        max = input(i) / i
+      output(i) = max
+    // if (input.length < 0)
+    //   throw new NoSuchElementException("empty list")
+    // output
 
   /** Traverses the specified part of the array and returns the maximum angle.
    */
   def upsweepSequential(input: Array[Float], from: Int, until: Int): Float =
-    ???
+    // ???
+    var i = from
+    var maxAngle = 0F
+    while (i < until)
+      if (input(i) / i > maxAngle)
+        maxAngle = input(i) / i
+    maxAngle
 
   /** Traverses the part of the array starting at `from` and until `end`, and
    *  returns the reduction tree for that part of the array.
@@ -51,7 +67,13 @@ object LineOfSight extends LineOfSightInterface:
    */
   def upsweep(input: Array[Float], from: Int, end: Int,
     threshold: Int): Tree =
-    ???
+    // ???
+    if (end - from <= threshold)
+      Leaf(from, end, upsweepSequential(input, from, end))
+    else
+      var mid = (end + from) / 2
+      var (tL,tR) = parallel(upsweep(input, from, mid), upsweep(input, mid, end))
+      Node(tL, tR)
 
   /** Traverses the part of the `input` array starting at `from` and until
    *  `until`, and computes the maximum angle for each entry of the output array,
@@ -59,17 +81,31 @@ object LineOfSight extends LineOfSightInterface:
    */
   def downsweepSequential(input: Array[Float], output: Array[Float],
     startingAngle: Float, from: Int, until: Int): Unit =
-    ???
+    // ???
+    if (from < until)
+      var i = from
+      var sA = startingAngle
+      while (i < until)
+        if (sA < input(i) / i)
+          sA = input(i) / i
+        output(i) = sA
+        i += 1
 
   /** Pushes the maximum angle in the prefix of the array to each leaf of the
    *  reduction `tree` in parallel, and then calls `downsweepSequential` to write
    *  the `output` angles.
    */
   def downsweep(input: Array[Float], output: Array[Float], startingAngle: Float,
-    tree: Tree): Unit =
-    ???
+    tree: Tree): Unit = tree match
+      case Leaf(from, until, startingAngle) =>
+        downsweepSequential(input, output, startingAngle, from, until)
+      case Node(tL,tR) =>
+        parallel(downsweep(input, output, startingAngle, tL), downsweep(input, output, startingAngle, tR))    
+
 
   /** Compute the line-of-sight in parallel. */
   def parLineOfSight(input: Array[Float], output: Array[Float],
     threshold: Int): Unit =
-    ???
+    // ???
+    var tree = upsweep(input, 0, input.length, threshold)
+    downsweep(input, output, 0, tree)
