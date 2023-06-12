@@ -69,11 +69,11 @@ object LineOfSight extends LineOfSightInterface:
     threshold: Int): Tree =
     // ???
     if (end - from <= threshold)
-      Leaf(from, end, upsweepSequential(input, from, end))
+      Tree.Leaf(from, end, upsweepSequential(input, from, end))
     else
       var mid = (end + from) / 2
-      var (tL,tR) = parallel(upsweep(input, from, mid), upsweep(input, mid, end))
-      Node(tL, tR)
+      var (tL,tR) = parallel(upsweep(input, from, mid, threshold), upsweep(input, mid, end, threshold))
+      Tree.Node(tL, tR)
 
   /** Traverses the part of the `input` array starting at `from` and until
    *  `until`, and computes the maximum angle for each entry of the output array,
@@ -97,9 +97,9 @@ object LineOfSight extends LineOfSightInterface:
    */
   def downsweep(input: Array[Float], output: Array[Float], startingAngle: Float,
     tree: Tree): Unit = tree match
-      case Leaf(from, until, startingAngle) =>
+      case Tree.Leaf(from, until, startingAngle) =>
         downsweepSequential(input, output, startingAngle, from, until)
-      case Node(tL,tR) =>
+      case Tree.Node(tL,tR) =>
         parallel(downsweep(input, output, startingAngle, tL), downsweep(input, output, startingAngle, tR))    
 
 
