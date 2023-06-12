@@ -39,6 +39,7 @@ object ParallelParenthesesBalancing extends ParallelParenthesesBalancingInterfac
    */
   def balance(chars: Array[Char]): Boolean =
     // ???
+    // leapard eats my shit, at traverse below...4 comment line next is irrelevant instantly
     // i know many guys love useing helper 'method' for this, but 
     // imperative code make me feel at home, fuck function-ism..
     // in weak defense of ...For maximum performance, use a while loop in the traverse 
@@ -59,14 +60,22 @@ object ParallelParenthesesBalancing extends ParallelParenthesesBalancingInterfac
 
     def traverse(idx: Int, until: Int, arg1: Int, arg2: Int) : Int /*: ???*/ = {
       // ???
-      while (idx < until) {
-        if (chars(idx) == '(')
-          arg1 += 1
-        else if (chars(idx) == ')')
-          arg2 += 1
-        idx += 1
-      arg1 - arg2
-      }
+      if (idx == until) 
+        arg1 - arg2
+      else if (chars(idx) == '(')
+        traverse(idx + 1, until, arg1 + 1, arg2)
+      else if (chars(idx) == ')')
+        traverse(idx + 1, until, arg1, arg2 + 1)
+      else
+        traverse(idx + 1, until, arg1, arg2)
+      // while (idx < until) {
+      //   if (chars(idx) == '(')
+      //     arg1 += 1
+      //   else if (chars(idx) == ')')
+      //     arg2 += 1
+      //   idx += 1
+      // arg1 - arg2
+      // }
     }
 
     def reduce(from: Int, until: Int) : Int /*: ???*/ = {

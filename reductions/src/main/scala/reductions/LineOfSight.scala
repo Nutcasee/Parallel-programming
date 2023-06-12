@@ -33,7 +33,8 @@ enum Tree(val maxPrevious: Float):
 object LineOfSight extends LineOfSightInterface:
 
   def lineOfSight(input: Array[Float], output: Array[Float]): Unit =
-    ???
+    // ???
+    dfs
 
   /** Traverses the specified part of the array and returns the maximum angle.
    */
