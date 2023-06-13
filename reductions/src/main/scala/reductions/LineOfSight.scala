@@ -34,14 +34,14 @@ object LineOfSight extends LineOfSightInterface:
 
   def lineOfSight(input: Array[Float], output: Array[Float]): Unit =
     // ???
-    var i  = 0
     output(0) = 0
-    i += 1
+    var i = 1
     var max = 0F
     while (i < input.length)
       if (input(i) / i > max)
         max = input(i) / i
       output(i) = max
+      i += 1
     // if (input.length < 0)
     //   throw new NoSuchElementException("empty list")
     // output
@@ -50,11 +50,12 @@ object LineOfSight extends LineOfSightInterface:
    */
   def upsweepSequential(input: Array[Float], from: Int, until: Int): Float =
     // ???
-    var i = from
+    var i = Math.max(from, 1)
     var maxAngle = 0F
     while (i < until)
       if (input(i) / i > maxAngle)
         maxAngle = input(i) / i
+      i += 1
     maxAngle
 
   /** Traverses the part of the array starting at `from` and until `end`, and
@@ -85,6 +86,7 @@ object LineOfSight extends LineOfSightInterface:
     if (from < until)
       var i = from
       var sA = startingAngle
+
       while (i < until)
         if (sA < input(i) / i)
           sA = input(i) / i
@@ -107,5 +109,5 @@ object LineOfSight extends LineOfSightInterface:
   def parLineOfSight(input: Array[Float], output: Array[Float],
     threshold: Int): Unit =
     // ???
-    var tree = upsweep(input, 0, input.length, threshold)
+    var tree = upsweep(input, 1, input.length, threshold)
     downsweep(input, output, 0, tree)
