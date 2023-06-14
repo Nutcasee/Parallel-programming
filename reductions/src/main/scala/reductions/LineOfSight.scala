@@ -99,11 +99,18 @@ object LineOfSight extends LineOfSightInterface:
    */
   def downsweep(input: Array[Float], output: Array[Float], startingAngle: Float,
     tree: Tree): Unit = tree match
-      case Tree.Leaf(from, until, startingAngle) =>
-        downsweepSequential(input, output, startingAngle, from, until)
-      case Tree.Node(tL,tR) =>
-        parallel(downsweep(input, output, startingAngle, tL), 
-        downsweep(input, output, Math.max(startingAngle, tL.maxPrevious), tR))    
+      // case Tree.Leaf(from, until, startingAngle) =>
+      //   downsweepSequential(input, output, startingAngle, from, until)
+      // case Tree.Node(tL,tR) =>
+      //   parallel(downsweep(input, output, startingAngle, tL), 
+      //   downsweep(input, output, Math.max(startingAngle, tL.maxPrevious), tR))  
+
+      case Tree.Leaf(from, until, _) => downsweepSequential(input, output, startingAngle, from, until)
+      case Tree.Node(left, right) => {
+        parallel(
+          downsweep(input, output, startingAngle, left),    // 0
+          downsweep(input, output, left.maxPrevious max startingAngle,right))  // 6
+      }   
 
 
   /** Compute the line-of-sight in parallel. */
