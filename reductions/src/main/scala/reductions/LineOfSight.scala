@@ -84,13 +84,11 @@ object LineOfSight extends LineOfSightInterface:
     startingAngle: Float, from: Int, until: Int): Unit =
     // ???
     if (from < until)
-      if (from == 0)
-        output(from) = startingAngle
-
       var i = from  
       var sA = startingAngle
+      
       while (i < until)
-        if (sA < input(i) / i)
+        if (i != 0 && sA < input(i) / i)  // i could be 0? Idk, 
           sA = input(i) / i
         output(i) = sA
         i += 1
@@ -104,12 +102,16 @@ object LineOfSight extends LineOfSightInterface:
       case Tree.Leaf(from, until, startingAngle) =>
         downsweepSequential(input, output, startingAngle, from, until)
       case Tree.Node(tL,tR) =>
-        parallel(downsweep(input, output, startingAngle, tL), downsweep(input, output, startingAngle, tR))    
+        parallel(downsweep(input, output, startingAngle, tL), 
+        downsweep(input, output, Math.max(startingAngle, tL.maxPrevious), tR))    
 
 
   /** Compute the line-of-sight in parallel. */
   def parLineOfSight(input: Array[Float], output: Array[Float],
     threshold: Int): Unit =
-    // ???
     var tree = upsweep(input, 1, input.length, threshold)
-    downsweep(input, output, tree.maxPrevious, tree)
+    downsweep(input, output, 0f, tree)
+    // println("up")
+    // println("down")
+    // println(input.toList)
+    // println(tree)
