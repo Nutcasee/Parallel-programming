@@ -84,9 +84,11 @@ object LineOfSight extends LineOfSightInterface:
     startingAngle: Float, from: Int, until: Int): Unit =
     // ???
     if (from < until)
-      var i = from
-      var sA = startingAngle
+      if (from == 0)
+        output(from) = startingAngle
 
+      var i = from  
+      var sA = startingAngle
       while (i < until)
         if (sA < input(i) / i)
           sA = input(i) / i
@@ -110,4 +112,4 @@ object LineOfSight extends LineOfSightInterface:
     threshold: Int): Unit =
     // ???
     var tree = upsweep(input, 1, input.length, threshold)
-    downsweep(input, output, 0, tree)
+    downsweep(input, output, tree.maxPrevious, tree)

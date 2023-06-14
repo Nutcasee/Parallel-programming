@@ -52,8 +52,10 @@ object ParallelCountChange extends ParallelCountChangeInterface:
     // could improve this by using helper method, cache...
     // countChangeCache(money, coins, cache: List.fill(coins.length - 1).(0))
     // var numberWay = 0
-    if (coins.isEmpty | money <= 0) 
+    if (coins.isEmpty | money < 0) 
       0
+    else if (money == 0)
+      1
     else
       countChange(money - coins.head, coins) + 
       countChange(money, coins.tail)

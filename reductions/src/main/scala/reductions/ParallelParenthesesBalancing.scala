@@ -47,10 +47,12 @@ object ParallelParenthesesBalancing extends ParallelParenthesesBalancingInterfac
     var bl = 0
     var i = 0
     while (i < chars.length)
-      if (chars(i) == '(')
+      if (bl < 0)
+        false
+      else if (chars(i) == '(')
         bl += 1
       else if (chars(i) == ')')
-        bl += -1
+        bl += -1                                                                             
       i += 1
     bl == 0
 
@@ -58,11 +60,13 @@ object ParallelParenthesesBalancing extends ParallelParenthesesBalancingInterfac
    */
   def parBalance(chars: Array[Char], threshold: Int): Boolean =
 
-    def traverse(idx: Int, until: Int, arg1: Int, arg2: Int) : Int /*: ???*/ = {
+    def traverse(idx: Int, until: Int, arg1: Int, arg2: Int) : (Int,Int) /*: ???*/ = {
       // ???
+      var startByOpenOrCloseBracket = false
       if (idx == until) 
-        arg1 - arg2
+        (arg1,arg2)
       else if (chars(idx) == '(')
+        
         traverse(idx + 1, until, arg1 + 1, arg2)
       else if (chars(idx) == ')')
         traverse(idx + 1, until, arg1, arg2 + 1)
@@ -78,18 +82,18 @@ object ParallelParenthesesBalancing extends ParallelParenthesesBalancingInterfac
       // }
     }
 
-    def reduce(from: Int, until: Int) : Int /*: ???*/ = {
+    def reduce(from: Int, until: Int) : (Int,Int) /*: ???*/ = {
       // ???
       if (until - from < threshold)
         traverse(from, until, 0, 0)
       else
         var mid = (from + until) / 2
-        val (r1,r2) = parallel(reduce(from, mid), reduce(mid, until))
-        r1 + r2
+        var ((r1,r2), (r3,r4)) = parallel(reduce(from, mid), reduce(mid, until))
+        ((r1 + r3), (r2 + r4))
     }
 
-    reduce(0, chars.length) == 0  // ???
-
+    var (rl, rr) = reduce(0, chars.length)  // ???
+    (rl + rr == 0) && rl >= 0
   // For those who want more:
   // Prove that your reduction operator is associative!
 
