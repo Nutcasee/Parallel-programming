@@ -62,70 +62,38 @@ object ParallelParenthesesBalancing extends ParallelParenthesesBalancingInterfac
 
     def traverse(idx: Int, until: Int, arg1: Int, arg2: Int) : (Int,Int) /*: ???*/ = {
       // ???
-      var i = idx
-      var begin = 0
-      var end = 0
-      var switched = false
-
-      while (i < until){
-        if(begin < 0){
-          switched = true
-        }else{
-          switched = false
-        }
-
-        if(chars(i) == '('){
-          if(switched){
-            end = end + 1
-          }else{
-            begin = begin + 1
-          }
-
-         // if(switched) end = end + 1 else begin = begin + 1
-        }
-        if(chars(i) == ')')
-        {
-          if (switched) {
-            end = end - 1
-          }else{
-            begin = begin - 1
-          }
-          //if(switched) end = end - 1 else begin = begin - 1
-        }
-
-        i = i + 1
-      }
-
-      (begin,  end)
+      var startByOpenOrCloseBracket = false
+      if (idx == until) 
+        (arg1,arg2)
+      else if (chars(idx) == '(')
+        
+        traverse(idx + 1, until, arg1 + 1, arg2)
+      else if (chars(idx) == ')')
+        traverse(idx + 1, until, arg1, arg2 + 1)
+      else
+        traverse(idx + 1, until, arg1, arg2)
+      // while (idx < until) {
+      //   if (chars(idx) == '(')
+      //     arg1 += 1
+      //   else if (chars(idx) == ')')
+      //     arg2 += 1
+      //   idx += 1
+      // arg1 - arg2
+      // }
     }
 
     def reduce(from: Int, until: Int) : (Int,Int) /*: ???*/ = {
       // ???
-      if(until - from <= threshold) traverse(from, until, 0, 0)
-      else {
-        val mid = from + (until - from) / 2
-        val (pair1, pair2) = parallel(reduce(from, mid), reduce(mid, until))
-
-        // This is my best piece of code ever
-        if(pair1._1 < 0 && pair2._1 > 0) (pair1._1 , pair2._1 + pair1._2 + pair2._2)
-        else if(pair2._1 < 0 && pair1._2 > 0) (pair1._1 + pair2._1 + pair1._2 ,  + pair2._2)
-        else (pair1._1 + pair2._1, pair1._2 + pair2._2)
-      }
+      if (until - from < threshold)
+        traverse(from, until, 0, 0)
+      else
+        var mid = (from + until) / 2
+        var ((r1,r2), (r3,r4)) = parallel(reduce(from, mid), reduce(mid, until))
+        ((r1 + r3), (r2 + r4))
     }
 
-    val res = reduce(0, chars.length)
-    res._1 + res._2 == 0 && res._1 >= 0
-
-    //   if (until - from < threshold)
-    //     traverse(from, until, 0, 0)
-    //   else
-    //     var mid = (from + until) / 2
-    //     var ((r1,r2), (r3,r4)) = parallel(reduce(from, mid), reduce(mid, until))
-    //     ((r1 + r3), (r2 + r4))
-    // }
-
-    // var (rl, rr) = reduce(0, chars.length)  // ???
-    // (rl + rr == 0) && rl >= 0
+    var (rl, rr) = reduce(0, chars.length)  // ???
+    (rl + rr == 0) && rl >= 0
   // For those who want more:
   // Prove that your reduction operator is associative!
 
