@@ -53,15 +53,10 @@ class KMeans extends KMeansInterface:
 
   def classify(points: ParSeq[Point], means: ParSeq[Point]): ParMap[Point, ParSeq[Point]] =
     // ???
-    val intermidAffectedByImperativeThingking0 = 
-    points.par
-    .map(p => (findClosest(p, means), p))
-
-    // .groupBy((k,v) => k)
-    // .groupBy(_._1)
+    val pointsMeanMap = points.par.groupBy(findClosest(_, means))
+    // So iterate over means get (empty) list and return map
+    means.par.map(mean => mean -> pointsMeanMap.getOrElse(mean, ParSeq())).toMap
     
-    intermidAffectedByImperativeThingking0
-    .groupBy((k,v) => k)
 
   def findAverage(oldMean: Point, points: ParSeq[Point]): Point = if points.isEmpty then oldMean else
     var x = 0.0
