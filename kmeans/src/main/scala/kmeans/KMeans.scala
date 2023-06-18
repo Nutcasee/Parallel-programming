@@ -7,6 +7,18 @@ import scala.collection.parallel.{ForkJoinTaskSupport, ParMap, ParSeq}
 import scala.util.Random
 import org.scalameter.*
 import java.util.concurrent.ForkJoinPool
+import scala.language.postfixOps
+
+/** Describes one point in three-dimensional space.
+ *
+ *  Note: deliberately uses reference equality.
+ */
+class Point(val x: Double, val y: Double, val z: Double):
+  private def square(v: Double): Double = v * v
+  def squareDistance(that: Point): Double =
+    square(that.x - x)  + square(that.y - y) + square(that.z - z)
+  private def round(v: Double): Double = (v * 100).toInt / 100.0
+  override def toString = s"(${round(x)}, ${round(y)}, ${round(z)})"
 
 class KMeans extends KMeansInterface:
 
@@ -41,12 +53,15 @@ class KMeans extends KMeansInterface:
 
   def classify(points: ParSeq[Point], means: ParSeq[Point]): ParMap[Point, ParSeq[Point]] =
     // ???
-    val intermidAffectedByImperativeThingking0 = points
-    .map(p => (findClosest(p, means), p)
-    .groupby((k,v) => k)
+    val intermidAffectedByImperativeThingking0 = 
+    points.par
+    .map(p => (findClosest(p, means), p))
+
+    // .groupBy((k,v) => k)
+    // .groupBy(_._1)
     
     intermidAffectedByImperativeThingking0
-
+    .groupBy((k,v) => k)
 
   def findAverage(oldMean: Point, points: ParSeq[Point]): Point = if points.isEmpty then oldMean else
     var x = 0.0
@@ -61,31 +76,36 @@ class KMeans extends KMeansInterface:
 
   def update(classified: ParMap[Point, ParSeq[Point]], oldMeans: ParSeq[Point]): ParSeq[Point] =
     // ???
-    classified
+    classified.par
     .map((k,v) => findAverage(k,v))
 
   def converged(eta: Double, oldMeans: ParSeq[Point], newMeans: ParSeq[Point]): Boolean =
     // ???
     var i = 0
-    while (i < oldMeans.length && abs(oldMeans(i).squareDistance(newMeans(i))) <= eta)
+    while (i < oldMeans.length && Math.abs(oldMeans(i).squareDistance(newMeans(i))) <= eta)
       i += 1
-    if (i = oldMeans.length - 1) true else false      
+    if (i == oldMeans.length - 1) true else false      
 
   @tailrec
   final def kMeans(points: ParSeq[Point], means: ParSeq[Point], eta: Double): ParSeq[Point] =
     // if (???) kMeans(???, ???, ???) else ??? // your implementation need to be tail recursive
-    classified(points, means)
+    var newMeans = update(classify(points, means), means)
+    if !converged(eta, means, newMeans) then
+      kMeans(points, newMeans, eta)
+    else
+      newMeans
 
-/** Describes one point in three-dimensional space.
- *
- *  Note: deliberately uses reference equality.
- */
-class Point(val x: Double, val y: Double, val z: Double):
-  private def square(v: Double): Double = v * v
-  def squareDistance(that: Point): Double =
-    square(that.x - x)  + square(that.y - y) + square(that.z - z)
-  private def round(v: Double): Double = (v * 100).toInt / 100.0
-  override def toString = s"(${round(x)}, ${round(y)}, ${round(z)})"
+
+// /** Describes one point in three-dimensional space.
+//  *
+//  *  Note: deliberately uses reference equality.
+//  */
+// class Point(val x: Double, val y: Double, val z: Double):
+//   private def square(v: Double): Double = v * v
+//   def squareDistance(that: Point): Double =
+//     square(that.x - x)  + square(that.y - y) + square(that.z - z)
+//   private def round(v: Double): Double = (v * 100).toInt / 100.0
+//   override def toString = s"(${round(x)}, ${round(y)}, ${round(z)})"
 
 
 object KMeansRunner:
