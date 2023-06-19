@@ -91,14 +91,15 @@ class KMeans extends KMeansInterface:
 
   def update(classified: ParMap[Point, ParSeq[Point]], oldMeans: ParSeq[Point]): ParSeq[Point] =
     // ???
-    oldMeans
-    .map(p => findAverage(p, classified.get(p)))
+    oldMeans.par
+    .map(p => findAverage(p, classified(p)))
     // classified
     // .map((k,v) => findAverage(k,v))
 
   def converged(eta: Double, oldMeans: ParSeq[Point], newMeans: ParSeq[Point]): Boolean =
     // ???
     var i = 0
+    if (oldMeans.length != newMeans.length) false
     while (i < oldMeans.length && Math.abs(oldMeans(i).squareDistance(newMeans(i))) <= eta)
       i += 1
     if (i == oldMeans.length - 1) true else false      
