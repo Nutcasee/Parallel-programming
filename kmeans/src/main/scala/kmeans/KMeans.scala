@@ -53,10 +53,30 @@ class KMeans extends KMeansInterface:
 
   def classify(points: ParSeq[Point], means: ParSeq[Point]): ParMap[Point, ParSeq[Point]] =
     // ???
-    val pointsMeanMap = points.par.groupBy(findClosest(_, means))
-    // So iterate over means get (empty) list and return map
-    means.par.map(mean => mean -> pointsMeanMap.getOrElse(mean, ParSeq())).toMap
+    // need 'support' here...not mine
+    val intermidAffectedByImperativeThingking0 = 
+    points.par
+    .groupBy(findClosest(_, means))
+
+    means.par.map(mean => 
+      if (intermidAffectedByImperativeThingking0.get(mean).isEmpty) 
+        (mean, ParSeq())
+      else
+        (mean, intermidAffectedByImperativeThingking0(mean)) 
+    ).toMap
+
+    // .map(p => (findClosest(p, means), p))
+
+    // .groupBy((k,v) => k)
+    // .groupBy(_._1)
     
+    // intermidAffectedByImperativeThingking0
+    // .groupBy((k,v) => k)
+    
+    
+    // val pointsMeanMap = points.par.groupBy(findClosest(_, means))
+    // // So iterate over means get (empty) list and return map
+    // means.par.map(mean => mean -> pointsMeanMap.getOrElse(mean, ParSeq())).toMap
 
   def findAverage(oldMean: Point, points: ParSeq[Point]): Point = if points.isEmpty then oldMean else
     var x = 0.0
@@ -71,8 +91,10 @@ class KMeans extends KMeansInterface:
 
   def update(classified: ParMap[Point, ParSeq[Point]], oldMeans: ParSeq[Point]): ParSeq[Point] =
     // ???
-    classified.par
-    .map((k,v) => findAverage(k,v))
+    oldMeans
+    .map(p => findAverage(p, classified.get(p)))
+    // classified
+    // .map((k,v) => findAverage(k,v))
 
   def converged(eta: Double, oldMeans: ParSeq[Point], newMeans: ParSeq[Point]): Boolean =
     // ???
