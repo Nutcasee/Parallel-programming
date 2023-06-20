@@ -59,10 +59,10 @@ class KMeans extends KMeansInterface:
     .groupBy(findClosest(_, means))
 
     means.par.map(mean => 
-      if (intermidAffectedByImperativeThingking0.get(mean).isEmpty) 
-        (mean, ParSeq())
+      if (intermidAffectedByImperativeThingking0(mean).isEmpty) 
+        mean -> ParSeq()
       else
-        (mean, intermidAffectedByImperativeThingking0(mean)) 
+        mean -> intermidAffectedByImperativeThingking0(mean)
     ).toMap
 
     // .map(p => (findClosest(p, means), p))
@@ -98,11 +98,17 @@ class KMeans extends KMeansInterface:
 
   def converged(eta: Double, oldMeans: ParSeq[Point], newMeans: ParSeq[Point]): Boolean =
     // ???
-    var i = 0
-    if (oldMeans.length != newMeans.length) false
-    while (i < oldMeans.length && Math.abs(oldMeans(i).squareDistance(newMeans(i))) <= eta)
-      i += 1
-    if (i == oldMeans.length - 1) true else false      
+    (oldMeans zip newMeans).forall(
+      (oldMean, newMean) => oldMean.squareDistance(newMean) <= eta 
+    )
+
+    // var i = 0
+    // if (oldMeans.length != newMeans.length) 
+    //   false
+    // else
+    //   while (i < oldMeans.length && Math.abs(oldMeans(i).squareDistance(newMeans(i))) <= eta)
+    //     i += 1
+    // if (i == oldMeans.length - 1) true else false      
 
   @tailrec
   final def kMeans(points: ParSeq[Point], means: ParSeq[Point], eta: Double): ParSeq[Point] =
