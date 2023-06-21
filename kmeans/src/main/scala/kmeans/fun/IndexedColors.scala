@@ -33,10 +33,16 @@ class IndexedColorFilter(initialImage: Img,
   def getStatus() = s"Converged after $steps steps."
   def getResult() = indexedImage(initialImage, newMeans)
 
-  private def imageToPoints(img: Img): Seq[Point] =
+  private def imageToPoints(img: Img): ParSeq[Point] =
     for x <- 0 until img.width; y <- 0 until img.height yield
+    image.par
+    .map((x,y) => 
       val rgba = img(x, y)
       Point(red(rgba), green(rgba), blue(rgba))
+    )
+    // for x <- 0 until img.width; y <- 0 until img.height yield
+    //   val rgba = img(x, y)
+    //   Point(red(rgba), green(rgba), blue(rgba))
 
   private def indexedImage(img: Img, means: ParSeq[Point]) =
     val dst = Img(img.width, img.height)
