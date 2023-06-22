@@ -4,6 +4,8 @@ package fun
 import scala.collection.Seq
 import scala.collection.parallel.ParSeq
 import scala.collection.parallel.CollectionConverters.*
+import scala.collection.parallel.{ForkJoinTaskSupport, ParMap, ParSeq}
+import scala.collection.{Map, Seq, mutable}
 
 abstract sealed trait InitialSelectionStrategy
 case object RandomSampling extends InitialSelectionStrategy
@@ -33,13 +35,23 @@ class IndexedColorFilter(initialImage: Img,
   def getStatus() = s"Converged after $steps steps."
   def getResult() = indexedImage(initialImage, newMeans)
 
-  private def imageToPoints(img: Img): ParSeq[Point] =
-    for x <- 0 until img.width; y <- 0 until img.height yield
-    image.par
-    .map((x,y) => 
+  private def imageToPoints(img: Img): Seq[Point] =
+    // for x <- 0 until img.width; y <- 0 until img.height yield
+    // img
+    // .map((x,y) => 
+    //   val rgba = img(x, y)
+    //   Point(red(rgba), green(rgba), blue(rgba))
+    // ).par
+
+    // (0 until img.width, 0 until img.height)
+    // .map((x,y) =>
+    //   val rgba = img(x, y)
+    //   Point(red(rgba), green(rgba), blue(rgba))
+    // ).par
+    for (x <- 0 until img.width; y <- 0 until img.height) yield ({
       val rgba = img(x, y)
       Point(red(rgba), green(rgba), blue(rgba))
-    )
+    })  //.to(mutable.ArrayBuffer).par
     // for x <- 0 until img.width; y <- 0 until img.height yield
     //   val rgba = img(x, y)
     //   Point(red(rgba), green(rgba), blue(rgba))
@@ -88,7 +100,7 @@ class IndexedColorFilter(initialImage: Img,
             Point(r.toDouble / 256,g.toDouble / 256, b.toDouble / 256)
 
     val d2 = initialPoints.size.toDouble / numColors
-    (0 until numColors) map (idx => initialPoints((idx * d2).toInt))
+    (0 until numColors).map(idx => initialPoints((idx * d2).toInt)) //.par
 
   private def computeSNR(points: ParSeq[Point], means: ParSeq[Point]): Double =
     var sound = 0.0

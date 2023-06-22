@@ -64,15 +64,6 @@ class KMeans extends KMeansInterface:
       else
         mean -> intermidAffectedByImperativeThingking0(mean)
     ).toMap
-
-    // .map(p => (findClosest(p, means), p))
-
-    // .groupBy((k,v) => k)
-    // .groupBy(_._1)
-    
-    // intermidAffectedByImperativeThingking0
-    // .groupBy((k,v) => k)
-    
     
     // val pointsMeanMap = points.par.groupBy(findClosest(_, means))
     // // So iterate over means get (empty) list and return map
