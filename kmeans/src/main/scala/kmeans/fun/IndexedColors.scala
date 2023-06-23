@@ -56,7 +56,7 @@ class IndexedColorFilter(initialImage: Img,
     //     Point(red(rgba), green(rgba), blue(rgba))
     //   )
     // )
-    for (x <- (0 until img.width).par; y <- (0 until img.height).par) yield ({
+    for (x <- (0 until img.width).par; y <- (0 until img.height)) yield ({
       val rgba = img(x, y)
       Point(red(rgba), green(rgba), blue(rgba))
     })  //.to(mutable.ArrayBuffer).par

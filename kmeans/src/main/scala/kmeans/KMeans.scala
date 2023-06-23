@@ -51,10 +51,14 @@ class KMeans extends KMeansInterface:
         closest = point
     closest
 
+  // Test description: 'classify' should work for empty 'points' and 
+  // 'means' == ParSeq(Point(1,1,1))(kmeans.KMeansSuite)
   def classify(points: ParSeq[Point], means: ParSeq[Point]): ParMap[Point, ParSeq[Point]] =
     // ???
     // need 'support' here...not mine
     val intermidAffectedByImperativeThingking0 = 
+    // if (points.isEmpty) then ParMap(Point)
+    // else
     points.par
     .groupBy(findClosest(_, means))
 
